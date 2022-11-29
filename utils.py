@@ -70,3 +70,5 @@ def load_state_dict_mute(self, state_dict: 'OrderedDict[str, Tensor]',
                     0, 'Missing key(s) in state_dict: {}. '.format(
                         ', '.join('"{}"'.format(k) for k in missing_keys)))
 
+if __name__ == '__main__':
+    pass

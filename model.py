@@ -5,7 +5,8 @@ from torchvision import models
 from torch.autograd import Variable
 import pretrainedmodels
 import timm
-from utils import load_state_dict_mute
+import utils 
+
 ######################################################################
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -130,7 +131,7 @@ class ft_net_swinv2(nn.Module):
         super(ft_net_swinv2, self).__init__()
         model_ft = timm.create_model('swinv2_base_window8_256', pretrained=False, img_size = input_size, drop_path_rate = 0.2)
         model_full = timm.create_model('swinv2_base_window8_256', pretrained=True)
-        load_state_dict_mute(model_ft, model_full.state_dict(), strict=False)
+        utils.load_state_dict_mute(model_ft, model_full.state_dict(), strict=False)
         #model_ft = timm.create_model('swinv2_cr_small_224', pretrained=True, img_size = input_size, drop_path_rate = 0.2)
         # avg pooling to global pooling
         model_ft.head = nn.Sequential() # save memory
