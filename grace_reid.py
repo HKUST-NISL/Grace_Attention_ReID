@@ -154,29 +154,34 @@ class GraceReID:
         return index, score[index]
  
     def reid(self,query_img, gallery_imgs, similarity_thresh = 0.4, visualize = False):
-
-        #Compute features
-        query_features = self.__extract_features(query_img)
-        gallery_features = self.__extract_gallery_features(gallery_imgs)
-        
-        #Sort by similarity score
-        index, score = self.__sort_img(query_features,gallery_features)  
-    
-        #Visualization
-        if(visualize):
-            fig = plt.figure(figsize=(16,4))
-            ax = plt.subplot(1,11,1)
-            ax.axis('off')
-            imshow(query_img,'query')
-            for i in range(10):
-                ax = plt.subplot(1,11,i+2)
+        if(query_img is not None and len(gallery_imgs) > 0):
+            #Compute features
+            query_features = self.__extract_features(query_img)
+            gallery_features = self.__extract_gallery_features(gallery_imgs)
+            
+            #Sort by similarity score
+            index, score = self.__sort_img(query_features,gallery_features)  
+            
+            '''
+            #Visualization
+            if(visualize):
+                fig = plt.figure(figsize=(16,4))
+                ax = plt.subplot(1,11,1)
                 ax.axis('off')
-                ax.set_title('%d:%.3f'%(i+1,score[i]), color='blue')
-                imshow(gallery_imgs[index[i]])
-        
-        #Return the index of the most similar one above the thresholds, or None if no one found
-        if(score[0] >= similarity_thresh):
-            return index[0], score[0]
+                imshow(query_img,'query')
+                for i in range(10):
+                    ax = plt.subplot(1,11,i+2)
+                    ax.axis('off')
+                    ax.set_title('%d:%.3f'%(i+1,score[i]), color='blue')
+                    imshow(gallery_imgs[index[i]])
+            '''
+            
+            #Return the index of the most similar one above the thresholds, or None if no one found
+            if(score[0] >= similarity_thresh):
+                return index[0], score[0]
+            else:
+                return None, None
+
         else:
             return None, None
 
