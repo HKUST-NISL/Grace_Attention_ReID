@@ -1,7 +1,7 @@
 # Don't track content of these folders
 data/*
 outputs/
-model/*
+#model/*
 logs/
 __pycache__/
 core
