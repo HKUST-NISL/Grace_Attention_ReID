@@ -181,7 +181,6 @@ class GraceReID:
                 return index[0], score[0]
             else:
                 return None, None
-
         else:
             return None, None
 
