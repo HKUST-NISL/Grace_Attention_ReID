@@ -139,7 +139,7 @@ class GraceReID:
             gallery_features.append(features)
         return torch.cat(gallery_features,0)
     
-    def __sort_img(self, qf, gf):
+    def __sort_img(self, qf, gf, ext_weights):
         #Transpose the query feature
         query = qf.view(-1,1)
         # print(query.shape)
@@ -149,18 +149,31 @@ class GraceReID:
         score = score.squeeze(1).cpu()
         score = score.numpy()
 
+
+        #FInd the minimal external weights
+        min_weight_idx = np.argsort(-np.array(ext_weights))[0]
+        min_ext_weight = ext_weights[min_weight_idx]
+
+        #Reweight the score by external weights
+        weighted_score = [0] * len(score)
+        for score_it in range(len(score)):
+            weighted_score[score_it] = score[score_it] * ( ext_weights[score_it] / min_ext_weight )
+
+
         #Sort by similarity
-        index = np.argsort(-score)  #from large to small
-        return index, score[index]
+        weighted_score = np.array(weighted_score)
+        indices = np.argsort(-weighted_score)  #from large to small
+
+        return indices, weighted_score[indices]
  
-    def reid(self,query_img, gallery_imgs, similarity_thresh = 0.4, visualize = False):
+    def reid(self,query_img, gallery_imgs, ext_weights, similarity_thresh = 0.4, visualize = False):
         if(query_img is not None and len(gallery_imgs) > 0):
             #Compute features
             query_features = self.__extract_features(query_img)
             gallery_features = self.__extract_gallery_features(gallery_imgs)
             
             #Sort by similarity score
-            index, score = self.__sort_img(query_features,gallery_features)  
+            index, score = self.__sort_img(query_features,gallery_features,ext_weights)  
             
             '''
             #Visualization
@@ -175,7 +188,7 @@ class GraceReID:
                     ax.set_title('%d:%.3f'%(i+1,score[i]), color='blue')
                     imshow(gallery_imgs[index[i]])
             '''
-            
+
             #Return the index of the most similar one above the thresholds, or None if no one found
             if(score[0] >= similarity_thresh):
                 return index[0], score[0]
