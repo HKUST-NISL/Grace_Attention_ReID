@@ -1,0 +1,1 @@
+This is a wrap around of Pytorch ReID (https://github.com/layumi/Person_reID_baseline_pytorch) for use with the tracking module of Gace.
